@@ -12,6 +12,14 @@ Ce dépôt publie la **version web**, installable comme application web. Le clie
 
 *Aperçu de la bibliothèque, état du 18 octobre 2026.*
 
+## Explorer Koma en images
+
+<img src="docs/images/series-mobile.png" width="320" alt="Séries de mangas regroupées dans la collection">
+
+![Mon quotidien : outils de lecture, prêts et budget](docs/images/quotidien.png)
+
+*Captures de démonstration ; elles illustrent différents états de développement de l’application.*
+
 ## Les usages principaux
 
 | Besoin | Réponse dans Koma |
