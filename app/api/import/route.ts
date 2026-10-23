@@ -1,0 +1,5 @@
+import {actor,privateJSON,sameOrigin,rate} from '../../../lib/access';
+import {canonicalISBN} from '../../../lib/books';
+import {searchBooks} from '../../../lib/catalog';
+export const dynamic='force-dynamic';
+export async function POST(req:Request){if(!sameOrigin(req))return privateJSON({error:'Origine refusée.'},403);if(!await actor(req))return privateJSON({error:'Connexion nécessaire.'},401);if(!await rate(req,'import-resolve',150))return privateJSON({error:'Réessayez dans une minute.'},429);let body:any;try{body=await req.json()}catch{return privateJSON({error:'Liste invalide.'},400)}if(!Array.isArray(body.isbns)||body.isbns.length>4||!body.isbns.every((id:any)=>typeof id==='string'&&canonicalISBN(id)))return privateJSON({error:'Quatre ISBN valides au maximum.'},400);const ids=[...new Set(body.isbns)] as string[];let cursor=0;const books:any[]=[],missing:string[]=[];await Promise.all([0,1,2].map(async()=>{while(cursor<ids.length){const id=ids[cursor++];try{const b=(await searchBooks(id))[0];if(b)books.push(b);else missing.push(id)}catch{missing.push(id)}}}));return privateJSON({books,missing})}

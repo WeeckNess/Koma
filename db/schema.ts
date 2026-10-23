@@ -1,0 +1,25 @@
+import { sqliteTable, text, integer, primaryKey,index,uniqueIndex } from 'drizzle-orm/sqlite-core';
+export const profiles = sqliteTable('profiles', { id:text('id').primaryKey(), name:text('name').notNull(), code:text('code').notNull().unique(), shared:integer('shared').notNull().default(0) });
+export const items = sqliteTable('items', { owner:text('owner').notNull(), isbn:text('isbn').notNull(), data:text('data').notNull(), status:text('status').notNull().default('owned'), read:integer('read').notNull().default(0), created:text('created').notNull() }, t=>[primaryKey({columns:[t.owner,t.isbn]})]);
+export const friends = sqliteTable('friends', { owner:text('owner').notNull(), target:text('target').notNull() }, t=>[primaryKey({columns:[t.owner,t.target]})]);
+
+export const devices = sqliteTable('devices', { hash:text('hash').primaryKey(), code:text('code').notNull().unique(), owner:text('owner'), name:text('name').notNull(), expires:integer('expires').notNull(), created:integer('created').notNull() });
+export const mutations = sqliteTable('mutations', { owner:text('owner').notNull(), id:text('id').notNull(), created:integer('created').notNull() },t=>[primaryKey({columns:[t.owner,t.id]})]);
+export const catalogCache = sqliteTable('catalog_cache', { key:text('key').primaryKey(), data:text('data').notNull(), expires:integer('expires').notNull() });
+export const suggestions = sqliteTable('suggestions', { owner:text('owner').notNull(), isbn:text('isbn').notNull(), data:text('data').notNull(), created:integer('created').notNull() },t=>[primaryKey({columns:[t.owner,t.isbn]})]);
+export const rateLimits = sqliteTable('rate_limits', { key:text('key').primaryKey(), count:integer('count').notNull(), expires:integer('expires').notNull() });
+export const friendRequests = sqliteTable('friend_requests', { sender:text('sender').notNull(), target:text('target').notNull(), created:integer('created').notNull() },t=>[primaryKey({columns:[t.sender,t.target]})]);
+export const backups = sqliteTable('backups', { owner:text('owner').notNull(), day:text('day').notNull(), data:text('data').notNull(), created:integer('created').notNull() },t=>[primaryKey({columns:[t.owner,t.day]})]);
+
+export const libraryStyles=sqliteTable('library_styles',{owner:text('owner').primaryKey(),earned:text('earned').notNull().default('{}'),customization:text('customization').notNull().default('{}')});
+
+export const readerSettings=sqliteTable('reader_settings',{owner:text('owner').primaryKey(),data:text('data').notNull().default('{}'),giftToken:text('gift_token'),calendarToken:text('calendar_token'),giftEnabled:integer('gift_enabled').notNull().default(0)},t=>[uniqueIndex('reader_gift_token_unique').on(t.giftToken),uniqueIndex('reader_calendar_token_unique').on(t.calendarToken)]);
+export const seriesFollows=sqliteTable('series_follows',{owner:text('owner').notNull(),key:text('key').notNull(),data:text('data').notNull()},t=>[primaryKey({columns:[t.owner,t.key]})]);
+export const loans=sqliteTable('reader_loans',{id:text('id').primaryKey(),owner:text('owner').notNull(),isbn:text('isbn').notNull(),borrower:text('borrower').notNull(),due:text('due').notNull().default(''),created:text('created').notNull(),returned:text('returned')},t=>[index('reader_loans_owner_idx').on(t.owner,t.isbn,t.returned)]);
+export const loanRequests=sqliteTable('loan_requests',{sender:text('sender').notNull(),target:text('target').notNull(),isbn:text('isbn').notNull(),state:text('state').notNull().default('pending'),created:text('created').notNull()},t=>[primaryKey({columns:[t.sender,t.target,t.isbn]}),index('loan_requests_target_idx').on(t.target,t.state)]);
+export const readerEvents=sqliteTable('reader_events',{owner:text('owner').notNull(),isbn:text('isbn').notNull(),kind:text('kind').notNull(),day:text('day').notNull()},t=>[primaryKey({columns:[t.owner,t.isbn,t.kind,t.day]})]);
+export const readerAlerts=sqliteTable('reader_alerts',{owner:text('owner').notNull(),id:text('id').notNull(),data:text('data').notNull(),created:text('created').notNull(),read:integer('read').notNull().default(0)},t=>[primaryKey({columns:[t.owner,t.id]})]);
+export const releaseObservations=sqliteTable('release_observations',{owner:text('owner').notNull(),isbn:text('isbn').notNull(),date:text('date').notNull()},t=>[primaryKey({columns:[t.owner,t.isbn]})]);
+export const giftReservations=sqliteTable('gift_reservations',{list:text('list').notNull(),isbn:text('isbn').notNull(),secret:text('secret').notNull(),created:text('created').notNull()},t=>[primaryKey({columns:[t.list,t.isbn]})]);
+export const catalogReports=sqliteTable('catalog_reports',{id:text('id').primaryKey(),owner:text('owner').notNull(),isbn:text('isbn').notNull(),data:text('data').notNull(),status:text('status').notNull().default('pending'),created:text('created').notNull()},t=>[index('catalog_reports_owner_idx').on(t.owner,t.created)]);
+export const spinePhotos=sqliteTable('spine_photos',{id:text('id').primaryKey(),owner:text('owner').notNull(),isbn:text('isbn').notNull(),created:text('created').notNull()},t=>[index('spine_photos_owner_idx').on(t.owner,t.isbn)]);

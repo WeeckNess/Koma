@@ -1,0 +1,5 @@
+import {env} from 'cloudflare:workers';
+import {actor,sameOrigin,privateJSON,rate} from '../../../lib/access';
+import {cleanBook} from '../../../lib/validation';
+export const dynamic='force-dynamic';
+export async function POST(req:Request){if(!sameOrigin(req))return privateJSON({error:'Origine refusée.'},403);const u=await actor(req);if(!u)return privateJSON({error:'Connexion nécessaire.'},401);if(!await rate(req,'suggestion',10))return privateJSON({error:'Réessayez dans une minute.'},429);let b:any;try{b=await req.json()}catch{return privateJSON({error:'Fiche invalide.'},400)}const book=cleanBook(b);if(!book)return privateJSON({error:'Vérifiez le titre et l’ISBN.'},400);await env.DB!.prepare('INSERT INTO suggestions (owner,isbn,data,created) VALUES (?,?,?,?) ON CONFLICT(owner,isbn) DO UPDATE SET data=excluded.data,created=excluded.created').bind(u.id,book.isbn,JSON.stringify({...book,source:'Proposition non vérifiée'}),Date.now()).run();return privateJSON({ok:true,notice:'Proposition conservée. Elle ne sera pas publiée sans vérification.'})}

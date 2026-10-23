@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {resolve,dirname} from 'node:path';
+import ts from 'typescript';
+// Load the small pure provider modules without a browser or an external test runtime.
+const cache=new Map();
+function load(path){path=resolve(path);if(cache.has(path))return cache.get(path);if(path.endsWith('.json'))return JSON.parse(readFileSync(path,'utf8'));const module={exports:{}};cache.set(path,module.exports);const js=ts.transpileModule(readFileSync(path,'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;new Function('require','module','exports',js)(p=>load(resolve(dirname(path),p.endsWith('.json')?p:p+'.ts')),module,module.exports);cache.set(path,module.exports);return module.exports;}
+const {editionInfo,groupSeries}=load('lib/series.ts');
+const {usableCover,thumbnail,coverScore}=load('lib/cover-policy.ts');
+const b=(isbn,title,publisher='Glénat',language='fr')=>({isbn,title,publisher,language});
+const original=b('a','One Piece · Tome 14');
+assert.equal(editionInfo(original).volume,14);
+assert.equal(editionInfo(b('b','One Piece - Édition originale - Tome 1')).key,editionInfo(original).key);
+const groups=groupSeries([original,b('b','One Piece - Édition originale - Tome 1'),b('c','Bleach Deluxe 1'),b('d','Bleach - Tome 1')]);
+assert.equal(groups.length,3);
+assert.deepEqual(groups[0].books.map(b=>editionInfo(b).volume),[1,14]);
+assert.notEqual(editionInfo(b('a','Bleach Deluxe 1')).key,editionInfo(b('b','Bleach - Tome 1')).key);
+assert.notEqual(editionInfo(b('a','One Piece Tome 1','Glénat','fr')).key,editionInfo(b('b','One Piece Tome 1','Glénat','ja')).key);
+assert.equal(editionInfo(b('a','Titans T01')).volume,1);
+assert.equal(editionInfo(b('a','One Piece',undefined,undefined)).volume,null);
+assert.equal(usableCover('https://example.com/book-3D.jpg'),false);
+assert.equal(usableCover('https://example.com/packshot.jpg'),false);
+assert.equal(usableCover('https://example.com/front.jpg'),true);
+assert.equal(thumbnail('https://media.hachette.fr/fit-in/1000x1000/imgArticle/test.jpg'),'https://media.hachette.fr/fit-in/360x540/imgArticle/test.jpg');
+assert.ok(coverScore('https://openapi.bnf.fr/image')<coverScore('https://media.hachette.fr/book.jpg'));
+assert.equal(editionInfo(b('a','Perfect World - Tome 1')).title,'Perfect World');
+assert.equal(editionInfo(b('a','Perfect World - Tome 1')).edition,'Standard');
+assert.notEqual(editionInfo(b('a','東京 Tome 1')).key,editionInfo(b('b','大阪 Tome 1')).key);
+assert.equal(editionInfo(b('a','One Piece Vol. 14, Instinct')).title,'One Piece');
+assert.doesNotThrow(()=>editionInfo({...b('a','Titre 1'),edition:'Édition [spéciale]'}));
+console.log('OK: numeric volume order, edition/language separation, exact owned count, compact titles and cover policy.');

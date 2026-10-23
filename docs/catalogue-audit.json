@@ -1,0 +1,77 @@
+{
+  "scope": "Eight exact ISBN samples; source cover URL presence does not prove image availability.",
+  "results": [
+    {
+      "isbn": "9782723488525",
+      "label": "One Piece 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Sélection Koma · ISBN vérifiés",
+      "elapsedMs": 351
+    },
+    {
+      "isbn": "9782723492591",
+      "label": "One Piece 14",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Glénat · fiche éditeur",
+      "elapsedMs": 771
+    },
+    {
+      "isbn": "9782344071120",
+      "label": "One Piece 113",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Glénat · fiche éditeur",
+      "elapsedMs": 16
+    },
+    {
+      "isbn": "9782344074282",
+      "label": "Bleach Deluxe 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Glénat · fiche éditeur",
+      "elapsedMs": 18
+    },
+    {
+      "isbn": "9782811611699",
+      "label": "Titans 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Sélection Koma · ISBN vérifiés",
+      "elapsedMs": 74
+    },
+    {
+      "isbn": "9782384961221",
+      "label": "Tani et Suzuki 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "nobi nobi ! · fiche éditeur",
+      "elapsedMs": 835
+    },
+    {
+      "isbn": "9782380710243",
+      "label": "Spy Family 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Sélection Koma · ISBN vérifiés",
+      "elapsedMs": 23
+    },
+    {
+      "isbn": "9791032710838",
+      "label": "Frieren 1",
+      "status": 200,
+      "found": true,
+      "coverListed": true,
+      "source": "Sélection Koma · ISBN vérifiés",
+      "elapsedMs": 22
+    }
+  ]
+}
